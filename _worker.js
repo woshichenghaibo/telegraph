@@ -55,8 +55,12 @@ async function handleRootRequest(request, USERNAME, PASSWORD, enableAuth) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Telegraph图床-基于Workers的图床服务">
   <meta name="keywords" content="Telegraph图床,Workers图床, Cloudflare, Workers,telegra.ph, 图床">
-  <title>Telegraph图床-基于Workers的图床服务</title>
-  <link rel="icon" href="https://p1.meituan.net/csc/c195ee91001e783f39f41ffffbbcbd484286.ico" type="image/x-icon">
+  <title>孤傲图床</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="TgImgBed" />
+  <link rel="shortcut icon" href="https://www.guao.de/logos/imgbed2.svg" />
+  <link rel="icon" href="https://www.guao.de/logos/imgbed2.png" />
+  <link rel="apple-touch-icon" href="https://www.guao.de/logos/imgbed2.png" />
   <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/twitter-bootstrap/4.6.1/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/bootstrap-fileinput/5.2.7/css/fileinput.min.css" rel="stylesheet" />
   <link href="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.css" rel="stylesheet" />
@@ -166,7 +170,7 @@ async function handleRootRequest(request, USERNAME, PASSWORD, enableAuth) {
               <div id="cacheContent" style="display: none;"></div>
           </form>
       </div>
-      <p class="project-link">项目开源于 GitHub - <a href="https://github.com/0-RTT/telegraph" target="_blank" rel="noopener noreferrer">0-RTT/telegraph</a></p>
+      <p class="project-link">项目开源于 GitHub - <a href="https://github.com/woshichenghaibo/telegraph" target="_blank" rel="noopener noreferrer">0-RTT/telegraph</a></p>
       <script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js" type="application/javascript"></script>
       <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/bootstrap-fileinput/5.2.7/js/fileinput.min.js" type="application/javascript"></script>
       <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/bootstrap-fileinput/5.2.7/js/locales/zh.min.js" type="application/javascript"></script>
@@ -184,24 +188,7 @@ async function handleRootRequest(request, USERNAME, PASSWORD, enableAuth) {
         if (images.length > 0) {
           backgroundDiv.style.backgroundImage = 'url(' + images[0] + ')';
         }
-        let index = 0;
-        let currentBackgroundDiv = backgroundDiv;
-        setInterval(() => {
-          const nextIndex = (index + 1) % images.length;
-          const nextBackgroundDiv = document.createElement('div');
-          nextBackgroundDiv.className = 'background next';
-          nextBackgroundDiv.style.backgroundImage = 'url(' + images[nextIndex] + ')';
-          document.body.appendChild(nextBackgroundDiv);
-          nextBackgroundDiv.style.opacity = 0;
-          setTimeout(() => {
-            nextBackgroundDiv.style.opacity = 1;
-          }, 50);
-          setTimeout(() => {
-            document.body.removeChild(currentBackgroundDiv);
-            currentBackgroundDiv = nextBackgroundDiv;
-            index = nextIndex;
-          }, 1000);
-        }, 5000);
+
       }
     
       $(document).ready(function() {
@@ -234,7 +221,7 @@ async function handleRootRequest(request, USERNAME, PASSWORD, enableAuth) {
             toastr.info('上传中...', '', { timeOut: 0 });
             const interfaceInfo = {
               acceptTypes: 'image/*,video/*',
-              maxFileSize: 20 * 1024 * 1024,
+              maxFileSize: 2 * 1024 * 1024,
               enableCompression: true
             };
             const acceptedTypes = interfaceInfo.acceptTypes.split(',');
@@ -270,7 +257,7 @@ async function handleRootRequest(request, USERNAME, PASSWORD, enableAuth) {
               toastr.info('正在压缩...', '', { timeOut: 0 });
               const compressedFile = await compressImage(file);
               if (compressedFile.size > interfaceInfo.maxFileSize) {
-                toastr.error('压缩后文件仍然超过最大限制（20MB），上传失败。');
+                toastr.error('压缩后文件仍然超过最大限制（2MB），上传失败。');
                 return;
               }
               file = compressedFile;
@@ -528,7 +515,7 @@ async function generateAdminPage(DATABASE) {
   <!DOCTYPE html>
   <html>
   <head>
-    <title>图库</title>
+    <title>图库后台</title>
     <link rel="icon" href="https://p1.meituan.net/csc/c195ee91001e783f39f41ffffbbcbd484286.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -955,7 +942,7 @@ async function handleImageRequest(request, DATABASE, TG_BOT_TOKEN) {
 
 async function handleBingImagesRequest(request) {
   const cache = caches.default;
-  const cacheKey = new Request('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=5');
+  const cacheKey = new Request('https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1');
   const cachedResponse = await cache.match(cacheKey);
   if (cachedResponse) return cachedResponse;
   const res = await fetch(cacheKey);
